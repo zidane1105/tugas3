@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Todo-List Absensi</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .container {
+      background-color: white;
+      padding: 25px;
+      border-radius: 12px;
+      margin-top: 40px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 600px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 5px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn-tambah {
+      background-color: #28a745;
+      color: white;
+      width: 100%;
+    }
+
+    .btn-edit {
+      background-color: #007bff;
+      color: white;
+      margin-left: 10px;
+    }
+
+    .btn-hapus {
+      background-color: #dc3545;
+      color: white;
+      margin-left: 5px;
+    }
+
+    .btn-hapus-semua {
+      background-color: #e74c3c;
+      color: white;
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .student-info {
+      flex-grow: 1;
+    }
+
+    .total {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Todo-List Absensi</h2>
+
+  <input type="text" id="nama" placeholder="Nama mahasiswa">
+  <input type="text" id="alamat" placeholder="Alamat mahasiswa">
+  <button class="btn-tambah" onclick="tambahMahasiswa()">Daftar</button>
+
+  <input type="text" id="filter" placeholder="Filter nama atau alamat" onkeyup="filterMahasiswa()">
+
+  <ul id="daftarMahasiswa"></ul>
+
+  <button class="btn-hapus-semua" onclick="hapusSemua()">Hapus Semua</button>
+
+  <div class="total">Total mahasiswa: <span id="total">0</span></div>
+</div>
+
+<script>
+  let mahasiswa = [];
+
+  function renderList() {
+    const list = document.getElementById("daftarMahasiswa");
+    const filter = document.getElementById("filter").value.toLowerCase();
+    list.innerHTML = "";
+
+    const filtered = mahasiswa.filter(m =>
+      m.nama.toLowerCase().includes(filter) || m.alamat.toLowerCase().includes(filter)
+    );
+
+    filtered.forEach((m, index) => {
+      const item = document.createElement("li");
+      item.innerHTML = `
+        <div class="student-info">${index + 1}. ${m.nama} - ${m.alamat}</div>
+        <div>
+          <button class="btn-edit" onclick="editMahasiswa(${index})">Edit</button>
+          <button class="btn-hapus" onclick="hapusMahasiswa(${index})">Hapus</button>
+        </div>
+      `;
+      list.appendChild(item);
+    });
+
+    document.getElementById("total").textContent = filtered.length;
+  }
+
+  function tambahMahasiswa() {
+    const nama = document.getElementById("nama").value.trim();
+    const alamat = document.getElementById("alamat").value.trim();
+    if (nama && alamat) {
+      mahasiswa.push({ nama, alamat });
+      document.getElementById("nama").value = '';
+      document.getElementById("alamat").value = '';
+      renderList();
+    }
+  }
+
+  function hapusMahasiswa(index) {
+    mahasiswa.splice(index, 1);
+    renderList();
+  }
+
+  function editMahasiswa(index) {
+    const m = mahasiswa[index];
+    const namaBaru = prompt("Edit nama:", m.nama);
+    const alamatBaru = prompt("Edit alamat:", m.alamat);
+    if (namaBaru && alamatBaru) {
+      mahasiswa[index] = { nama: namaBaru, alamat: alamatBaru };
+      renderList();
+    }
+  }
+
+  function hapusSemua() {
+    mahasiswa = [];
+    renderList();
+  }
+
+  function filterMahasiswa() {
+    renderList();
+  }
+</script>
+
+</body>
+</html>
